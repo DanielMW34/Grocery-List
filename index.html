@@ -22,78 +22,84 @@
 		</div>
     
 		<script type="text/babel">
-      var ProductItem = React.createClass({
-        render: function() {
-          return(
-            <h4>Product: <span className="commentText">{this.props.children}</span></h4>
-          );
-        }
-      });
-      
-      var ProductSKU = React.createClass({
-        render: function() {
-          return(
-            <h4>SKU: <span className="commentText">{this.props.children}</span></h4>
-          );
-        }
-      });
-      
-      var ProductPrice = React.createClass({
-        render: function() {
-          return(
-            <h4>Price: <span className="commentText">{this.props.children}</span></h4>
-          );
-        }
-      });
-      
-      var GroceryItem = React.createClass ({
-        getInitialState: function() {
-          return {editing: false}
-        },
-        edit: function () {
-          this.setState({editing: true});
-        },
-        save: function () {
-          var productName = this.refs.productInput.value;
-          var skuNumber = this.refs.skuInput.value;
-          var productPrice = this.refs.priceInput.value;
-          console.log("input info: " + productName + " " + skuNumber + " " + productPrice);
-          this.setState({editing: false});
-        },
-        remove: function () {
-          alert("remove button pressed");
-        },
-        renderNormal: function() {
-          return(
-            <div className="listItem">
-              <ProductItem />
-              <ProductSKU />
-              <ProductPrice />  
-              <button onClick={this.edit} className="button-edit">Edit</button>
-              <button onClick={this.remove} className="button-remove">Remove</button>
-            </div>  
-         );
-        },
-        renderEdit: function() {
-          return (
-            <div className="listItem">
-              <input type="text" placeholder="Product" maxlength="100" ref="productInput"></input><br></br>
-              <input type="number" placeholder="SKU" maxlength="25" ref="skuInput"></input><br></br>
-              <input type="number" placeholder="Price in dollars" maxlength="20" ref="priceInput"></input>
-              <button onClick={this.save} className="button-save">Save</button>
-            </div>
-          );
-        },
-        render: function() {
-          if(this.state.editing) {
-            return this.renderEdit();
-            } else {
-              return this.renderNormal();
-            }
-          }   
-      });
+      var Item = React.createClass ({
+  getInitialState: function() {
+    return {
+      editing: true,
+      }
+    },
+  renderEdit: function() {
+    return (
+      <div className="listItem">
+        <h4>Product: <input type="text" defaultValue={this.state.productName} placeholder="Enter Product Name" maxlength="100" ref="productInput" /></h4>
+        <h4>SKU: <input type="text" defaultValue={this.state.productSKU} placeholder="Enter SKU" maxlength="25" ref="skuInput" /></h4>
+        <h4>Price: $<input type="text" defaultValue={this.state.productPrice} placeholder="Enter Price in Dollars" maxlength="20" ref="priceInput" /></h4>
+        <button onClick={this.save} className="button-save">Save</button>
+      </div>
+    );
+  },
+  save: function () {
+    var productName = this.refs.productInput.value;
+    var skuNumber = this.refs.skuInput.value;
+    var productPrice = this.refs.priceInput.value;
+    this.setState({productName: productName});
+    this.setState({productSKU: skuNumber});
+    this.setState({productPrice: productPrice});
+    this.setState({editing: false});   
+    var ItemDetail = [productName, skuNumber, productPrice];
+  },
+  renderNormal: function() {
+    return (
+      <div className="listItem">
+        <h4>Product: {this.state.productName}</h4>
+        <h4>SKU: {this.state.productSKU}</h4>
+        <h4>Price: ${this.state.productPrice}</h4>
+        <button onClick={this.edit} className="button-edit">Edit</button>
+        <button onClick={this.remove} className="button-remove">Remove</button>
+      </div>      
+    )
+  },
+  edit: function () {
+    this.setState({editing: true});
+  },
+  remove: function () {
+    alert("remove button pressed");
+  },
+  render: function() {
+    if(this.state.editing) {
+      return this.renderEdit();
+    } else {
+      return this.renderNormal();
+    }
+  }   
+});
 
-      ReactDOM.render(<GroceryItem />, document.getElementById("content"));
+/* in GroceryList, we must store an array of objects, each of which will store 3 values which will be used to define the state.productName, state.productSKU, state.productPrice.  I must figure out how to store these values--pretty easy-- and then access these values---- and assign these values to state */
+var GroceryList = React.createClass ({
+  getInitialState: function () {
+    return {
+      
+      ListItems: [{},{}]
+      }
+    },  
+  EachListItemLoop: function(objectInList, i) {
+    return (
+      <Item key={i} itemIndex={i}>
+               
+      </Item>
+      );
+  },
+  render: function() {
+    return (
+      <div className="board">
+        {
+          this.state.ListItems.map(this.EachListItemLoop)
+        }
+      </div>
+    );
+  }
+});
+ReactDOM.render(<GroceryList />, document.getElementById("content"));
                    
     </script>
 	</body>
